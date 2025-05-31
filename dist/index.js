@@ -1,4 +1,6 @@
 import * as prettierPluginTypeScript from 'prettier/plugins/typescript';
+import * as htmlPlugin from 'prettier/plugins/html';
+import { doc } from 'prettier';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -33,16 +35,25 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
+var _a = doc.builders; _a.join; _a.line; _a.ifBreak; _a.group;
+var sortOrder = ["key", "id", "className", "onClick"].toReversed();
 function sortAttributes(node) {
     var _a;
     if (!node || typeof node !== "object")
         return;
+    // For HTML (node.attrs)
+    if (Array.isArray(node.attrs)) {
+        node.attrs.sort(function (a, b) { return (a.name > b.name ? 1 : -1); });
+    }
     // For JSX (node.openingElement.attributes)
     if (node.type === "JSXElement" && ((_a = node.openingElement) === null || _a === void 0 ? void 0 : _a.attributes)) {
         node.openingElement.attributes.sort(function (a, b) {
-            var _a, _b, _c, _d;
-            var nameA = (_b = (_a = a.name) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : "";
-            var nameB = (_d = (_c = b.name) === null || _c === void 0 ? void 0 : _c.name) !== null && _d !== void 0 ? _d : "";
+            var _a = [a, b].map(function (_) { var _a, _b; return (_b = (_a = _.name) === null || _a === void 0 ? void 0 : _a.name) !== null && _b !== void 0 ? _b : ""; }), nameA = _a[0], nameB = _a[1];
+            var _b = [nameA, nameB].map(function (name) {
+                return sortOrder.indexOf(name);
+            }), indexA = _b[0], indexB = _b[1];
+            if (indexA != indexB)
+                return indexB - indexA;
             return nameA.localeCompare(nameB);
         });
     }
@@ -57,6 +68,13 @@ function sortAttributes(node) {
         }
     }
 }
+// Override HTML parser
+__assign(__assign({}, htmlPlugin.parsers.html), { parse: function (text, parsers, options) {
+        console.log("htmlParser");
+        var ast = htmlPlugin.parsers.html.parse(text, options);
+        sortAttributes(ast);
+        return ast;
+    } });
 // Override Typescript parser
 var tsxParser = __assign(__assign({}, prettierPluginTypeScript.parsers.typescript), { parse: function (text, options) {
         var ast = prettierPluginTypeScript.parsers.typescript.parse(text, options);
@@ -64,6 +82,7 @@ var tsxParser = __assign(__assign({}, prettierPluginTypeScript.parsers.typescrip
         return ast;
     } });
 var parsers = {
+    // html: htmlParser,
     typescript: tsxParser,
 };
 
