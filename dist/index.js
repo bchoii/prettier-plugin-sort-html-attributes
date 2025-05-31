@@ -36,7 +36,7 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
 };
 
 var _a = doc.builders; _a.join; _a.line; _a.ifBreak; _a.group;
-var sortOrder = ["key", "id", "className", "style", "onClick"].toReversed();
+var sortOrder = ["onClick", "style", "className", "key", "id"];
 function sortAttributes(node) {
     var _a;
     if (!node || typeof node !== "object")
