@@ -3,7 +3,18 @@ import * as htmlPlugin from "prettier/plugins/html";
 import { doc } from "prettier";
 const { join, line, ifBreak, group } = doc.builders;
 
-const sortOrder = ["onClick", "style", "className", "key", "id"];
+const sortOrder = [
+  "onChange",
+  "onClick",
+  "value",
+  "defaultValue",
+  "type",
+  "name",
+  "style",
+  "className",
+  "key",
+  "id",
+];
 
 function sortAttributes(node: any): void {
   if (!node || typeof node !== "object") return;

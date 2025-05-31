@@ -36,7 +36,18 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
 };
 
 var _a = doc.builders; _a.join; _a.line; _a.ifBreak; _a.group;
-var sortOrder = ["onClick", "style", "className", "key", "id"];
+var sortOrder = [
+    "onChange",
+    "onClick",
+    "value",
+    "defaultValue",
+    "type",
+    "name",
+    "style",
+    "className",
+    "key",
+    "id",
+];
 function sortAttributes(node) {
     var _a;
     if (!node || typeof node !== "object")
